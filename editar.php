@@ -5,7 +5,7 @@ $output = array('error' => false);
 $database = new Connection();
 $db = $database->open();
 try {
-    $sql = "UPDATE tbl_cmv_cliente SET nombre ='".$_POST['nombre']."', apellidoPaterno='".$_POST['fecha']."', apellidoMaterno='".$_POST['inicio']."' , rfc='".$_POST['fin']."' , curp='".$_POST['hora']."'  WHERE idCliente = '" . $_POST['id'] . "'";
+    $sql = "UPDATE tbl_cmv_cliente SET nombre ='".$_POST['nombre']."', apellidoPaterno='".$_POST['paterno']."', apellidoMaterno='".$_POST['materno']."' , rfc='".$_POST['rfc']."' , curp='".$_POST['curp']."'  WHERE idCliente = '" . $_POST['idc'] . "'";
     if ($db->exec($sql)) {
         $output['message'] = 'Modificado correctamente';
     } else {

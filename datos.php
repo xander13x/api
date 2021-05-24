@@ -5,12 +5,9 @@
                 $db = $database->open();
 
                 try{    
-                    $sql = "
-                        SELECT c.nombre AS nombre, c.apellidoPaterno AS paterno, c.apellidoMaterno AS materno, c.idCliente AS idC, cc.saldoActual AS saldo, cc.fechaContratacion AS contratado, cc.fechaUltimoMovimiento AS ultimo, tc.nombreCuenta AS tipo, c.idCliente AS idC
+                    $sql = "SELECT c.nombre As nombre, c.apellidoPaterno AS paterno, c.apellidoMaterno AS materno, c.idCliente AS idC, c.curp, c.rfc
                             FROM tbl_cmv_cliente c
-                            LEFT JOIN tbl_cmv_cliente_cuenta cc ON (c.`idCliente` = cc.`idCliente`)
-                            LEFT JOIN cat_cmv_tipo_cuenta tc ON (tc.idCuenta = cc.idCuenta)
-                            WHERE c.idCliente = ".$_POST['id']."
+                            WHERE idCliente = ".$_POST['id']."
                     ;";
 //                    echo $sql;
                     $jsonPhp = array();
@@ -20,10 +17,8 @@
                              'paterno' => $row['paterno'],
                              'materno' => $row['materno'],
                              'idC' => $row['idC'],
-                             'saldo' => $row['saldo'],
-                             'contratado' => $row['contratado'],
-                             'ultimo' => $row['ultimo'],
-                             'tipo' => $row['tipo']
+                             'curp' => $row['curp'],
+                             'rfc' => $row['rfc']
                      );
                      }
                      $jsonstring = json_encode($jsonPhp);

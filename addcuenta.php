@@ -5,8 +5,8 @@
  $db = $database->open();
 
     try{
-        $stmt = $db->prepare("INSERT INTO tbl_cmv_cliente (nombre, apellidoPaterno, apellidoMaterno, rfc, curp, fechaAlta) VALUES (:nombre, :apellidoPaterno, :apellidoMaterno, :rfc, :curp, NOW())");
-    if ($stmt->execute(array(':nombre' => $_POST['nombre'], ':apellidoPaterno' => $_POST['apellidoPaterno'], ':apellidoMaterno' => $_POST['apellidoMaterno'],':rfc' => $_POST['rfc'],':curp' => $_POST['curp']))) {
+        $stmt = $db->prepare("INSERT INTO tbl_cmv_cliente_cuenta (idCliente, idCuenta, saldoActual, fechaContratacion, fechaUltimoMovimiento) VALUES (:idCliente, :idCuenta, :saldoActual, NOW(), NOW())");
+    if ($stmt->execute(array(':idCliente' => $_POST['idCliente'], ':idCuenta' => $_POST['idCuenta'], ':saldoActual' => $_POST['saldo']))) {
         $output['message'] = 'Agregado correctamente';
     } else {
         $output['error'] = true;
