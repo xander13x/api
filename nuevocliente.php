@@ -3,11 +3,10 @@
                 include_once("bd/conexion.php"); 
                 $database = new Connection();
                 $db = $database->open();
-
                 try{    
                     $sql = "SELECT c.idCliente AS idC
                             FROM tbl_cmv_cliente c
-                            WHERE curp = ".$_POST['curp']."
+                            WHERE curp = '".$_POST['curp']."'
                     ;";
 //                    echo $sql;
                     $jsonPhp = array();

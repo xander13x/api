@@ -1,6 +1,5 @@
-var postDataJS;
+var postDataJS, idc;
 $(document).ready(function (){
-    console.log("funciones");
     mostrartabla();
 });
 function mostrartabla(){
@@ -19,16 +18,29 @@ function mostrartabla(){
                            <td>${elemento.paterno}</td>
                            <td>${elemento.materno}</td>
                            <td>
-                                <a id="editar" class="btn btn-info" data-toggle="modal" data-target="#modalEditar">Editar</a>
-                                <a id="detalles" class="btn btn-info" data-toggle="modal" data-target="#modalDetalles">Detalles</a>
+                                <a id="editar" class="btn btn-warning" data-toggle="modal" data-target="#modalEditar">Editar</a>
+                                <a id="detalles" class="btn btn-primary" data-toggle="modal" data-target="#modalDetalles">Detalles</a>
                                 <a id="eliminar" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar">Eliminar</a>
                             </td>
                         </tr>
                     `;
       });
            $('#clientes').html(cadena);
-       }
+           
+       },complete: function () {
+                dTabla("tablaBusquedas");
+            }
+
+       
+       
     });
+    }
+    
+    function dTabla(table) {
+            
+            $("#" + table).DataTable();
+        
+           
     }
     
 $('#nuevo').click(function (e){
@@ -56,59 +68,89 @@ $('#new').click(function (){
         paterno: $('#apellidoP').val(),
         materno: $('#apellidoM').val(),
         rfc: $('#rfc').val(),
-        curp: $('#curp').val(),
-        saldo: $('#saldon').val()
+        curp: $('#curp').val()
+
     };
-    console.log(postDataJS);
     
     $.ajax({
         async: false,
         url: 'addcliente.php',
         type: 'POST',
         data: postDataJS,
-        success: function (response) {
-            console.log(response);
+        success: function () {
+           
+        }
+    });
     $.ajax({
         async: false ,
         url: 'nuevocliente.php',
         type: 'POST',
         data: postDataJS,
         success: function (response) {
-            let objeto = JSON.parse(response)
-            postDataJS = {
-            idCliente: objeto[0].idC,
-            idCuenta: $('#tipon').val()
-            }
+            let objeto = JSON.parse(response);
+           idc = objeto[0].idC;
             
+        }
+    });
+     postDataJS = {
+            idCliente: idc,
+            idCuenta: $('#tipon').val(),
+            saldo: $('#saldon').val()
+            }
     $.ajax({
         async: false ,
         url: 'addcuenta.php',
         type: 'POST',
         data: postDataJS,
-        success: function (response) {
-            console.log(response);
+        success: function () {
+           
             mostrartabla();
         }
     });
-        }
-    });
-        }
-    });
-    
+
 });
 
 
 $(document).on('click','#editar',function (e){
     e.preventDefault();
     let id = $($(this)[0].parentElement.parentElement).attr('id');
-          $.post('datos.php',{id},function (response) {
+              
+  $.ajax({
+         async: false,
+        data:{id},
+       url: 'datos.php',
+       type: 'POST',
+       success: function (response){
         let objeto = JSON.parse(response);
         $('#nombree').val(objeto[0].nombre);
         $('#apellidoPe').val(objeto[0].paterno);
         $('#apellidoMe').val(objeto[0].materno);
         $('#rfce').val(objeto[0].rfc);
         $('#curpe').val(objeto[0].curp);
+        $('#saldoe').val(objeto[0].saldo);
+        $('#movimiento').val(objeto[0].movimiento);
         $('#idce').val(objeto[0].idC);
+        let idcuenta = objeto[0].idcuenta;
+    $.ajax({
+       url: 'selectTipoCuenta.php',
+       type: 'GET',
+       success: function (response){
+           let objeto = JSON.parse(response);
+           let cadena='';
+           objeto.forEach(elemento=>{
+               if (elemento.id==idcuenta)
+              cadena += `
+                        <option selected value="${elemento.id}">${elemento.nombre}</option>
+                    `;
+               else
+              cadena += `
+                        <option value="${elemento.id}">${elemento.nombre}</option>
+                    `;
+      });
+           $('#tipoe').html(cadena);
+       }
+    });
+       }
 });
     });
   
@@ -120,16 +162,26 @@ $('#edita').click(function (e){
         materno: $('#apellidoMe').val(),
         rfc: $('#rfce').val(),
         curp: $('#curpe').val(),
-        idc: $('#idce').val()
+        idc: $('#idce').val(),
+        saldo: $('#saldoe').val(),
+        tipo: $('#tipoe').val()
     };
-    console.log(postDataJS);
     $.ajax({
         async: false,
         data: postDataJS,
         type: 'POST',
-        url: "editar.php",
-        success: function (response) {
-            console.log(response);
+        url: "editarcliente.php",
+        success: function () {
+           
+        }
+    });
+    $.ajax({
+        async: false,
+        data: postDataJS,
+        type: 'POST',
+        url: "editarcuenta.php",
+        success: function () {
+           
             mostrartabla();
         }
     });
@@ -158,7 +210,6 @@ $('#edita').click(function (e){
     e.preventDefault();
     $('#modalEliminar').fadeIn();
     let id = $($(this)[0].parentElement.parentElement).attr('id');
-    console.log(id);
     $('#mensajeeliminar').html("Esta seguro de querer cancelar la tarea</br>Folio:"+id);
     $('#can').val(id);
     
@@ -170,24 +221,27 @@ $('#edita').click(function (e){
     
     });
     
-    $('#edita').click(function (e){
+    $('#elimina').click(function (e){
     e.preventDefault();
     postDataJS = {
-        nombre: $('#nombree').val(),
-        paterno: $('#apellidoPe').val(),
-        materno: $('#apellidoMe').val(),
-        rfc: $('#rfce').val(),
-        curp: $('#curpe').val(),
         idc: $('#idceliminar').val()
     };
-    console.log(postDataJS);
     $.ajax({
         async: false,
         data: postDataJS,
         type: 'POST',
-        url: "eliminar.php",
-        success: function (response) {
-            console.log(response);
+        url: "eliminarcuenta.php",
+        success: function () {
+           
+        }
+    });
+    $.ajax({
+        async: false,
+        data: postDataJS,
+        type: 'POST',
+        url: "eliminarcliente.php",
+        success: function () {
+           
             mostrartabla();
         }
     });

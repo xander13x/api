@@ -5,9 +5,10 @@
                 $db = $database->open();
 
                 try{    
-                    $sql = "SELECT c.nombre As nombre, c.apellidoPaterno AS paterno, c.apellidoMaterno AS materno, c.idCliente AS idC, c.curp, c.rfc
+                    $sql = "SELECT c.nombre AS nombre, c.apellidoPaterno AS paterno, c.apellidoMaterno AS materno, c.idCliente AS idC, c.curp, c.rfc, cc.idCuenta AS idcuenta, cc.saldoActual AS saldo
                             FROM tbl_cmv_cliente c
-                            WHERE idCliente = ".$_POST['id']."
+                            LEFT JOIN tbl_cmv_cliente_cuenta cc ON (cc.idCliente = c.idCliente)
+                            WHERE c.idCliente =".$_POST['id']."
                     ;";
 //                    echo $sql;
                     $jsonPhp = array();
@@ -18,7 +19,9 @@
                              'materno' => $row['materno'],
                              'idC' => $row['idC'],
                              'curp' => $row['curp'],
-                             'rfc' => $row['rfc']
+                             'rfc' => $row['rfc'],
+                             'idcuenta' => $row['idcuenta'],
+                             'saldo' => $row['saldo']
                      );
                      }
                      $jsonstring = json_encode($jsonPhp);
